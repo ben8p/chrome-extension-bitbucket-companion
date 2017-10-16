@@ -1,0 +1,25 @@
+{
+    "extends": [
+        "airbnb"
+    ],
+    "env": {
+        "browser"
+     },
+     "globals": {
+        "window": true,
+        "localStorage": true,
+        "document": true,
+        "chrome": true,
+        "XMLHttpRequest": true,
+    },
+    "rules": {
+        "no-console": "off",
+        "indent": ["error", "tab"],
+        "no-tabs": "off",
+        "prefer-destructuring": "off",
+        "no-plusplus": "off",
+        "no-param-reassign": "off",
+        "import/no-extraneous-dependencies": "off",
+        "max-len": "off"
+    }
+}

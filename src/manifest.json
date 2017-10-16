@@ -1,0 +1,34 @@
+{
+	"manifest_version": 2,
+
+	"version": "1.0.0",
+
+	"minimum_chrome_version": "50",
+
+	"default_locale": "en",
+	"options_page": "options.html",
+	"browser_action": {
+		"default_icon": "img/icon.png",
+		"default_popup": "popup.html"
+	},
+	"permissions": [
+		"storage",
+		"alarms",
+		"tabs",
+		"notifications",
+		"https://*/",
+		"http://*/"
+	],
+
+	"background": {
+		"scripts": ["js/events.js"],
+		"persistent": true
+	},
+
+	"content_scripts": [{
+		"all_frames": false,
+		"run_at": "document_end",
+		"js": ["js/monitor.js"],
+		"matches": ["http://*/*", "https://*/*"]
+	}]
+}

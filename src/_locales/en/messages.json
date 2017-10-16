@@ -1,0 +1,83 @@
+{
+	"name": {
+		"message": "Bitbucket Companion"
+	},
+	"description": {
+		"message": "This extension add some functionalities to Bitbucket"
+	},
+	"options": {
+		"message": "-- Options"
+	},
+	"password": {
+		"message": "Bitbucket Password:"
+	},
+	"save": {
+		"message": "Save"
+	},
+	"api": {
+		"message": "Bitbucket server:"
+	},
+	"user": {
+		"message": "Bitbucket User:"
+	},
+	"reviewsToDo": {
+		"message": "You have $details$ reviews to do.",
+		"placeholders": {
+			"details": {
+				"content": "$1"
+			}
+		}
+	},
+	"dontForget": {
+		"message": "don't forget!"
+	},
+	"saved": {
+		"message": "All options are saved."
+	},
+	"settingsFirst": {
+		"message": "Something went wrong, maybe you didn't configure properly the extension, or maybe you are not admin. Please first visit the options page to double check the settings"
+	},
+	"todo": {
+		"message": "Pull Requests to do"
+	},
+	"done": {
+		"message": "Pull Requests done"
+	},
+	"none": {
+		"message": "none"
+	},
+	"me": {
+		"message": "myself"
+	},
+	"refreshInProgress": {
+		"message": "refresh in progress"
+	},
+	"sinceRecord": {
+		"message": "new comment(s) since last recorded visit"
+	},
+	"nextRefresh": {
+		"message": "Next refresh in $minutes$ minutes.",
+		"placeholders": {
+			"minutes": {
+				"content": "$1"
+			}
+		}
+	},
+	"comments": {
+		"message": "comments"
+	},
+	"openTasks": {
+		"message": "tasks open"
+	},
+	"haveChanged": {
+		"message": "Pull request change detected"
+	},
+	"prHaveChanged": {
+		"message": "We detected $count$ pull requests have changed since the approval. We are removing the APPROVAL state.",
+		"placeholders": {
+			"count": {
+				"content": "$1"
+			}
+		}
+	}
+}
