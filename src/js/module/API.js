@@ -151,7 +151,7 @@ export default {
 							commentCount: +(value.properties.commentCount || 0),
 							openTaskCount: +(value.properties.openTaskCount || 0),
 						};
-						if (prData.isMine) {
+						if (prData.isMine && prData.state === 'OPEN') {
 							newState = 'PENDING';
 						}
 						prData.state = newState;

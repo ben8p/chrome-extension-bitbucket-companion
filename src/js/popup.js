@@ -23,7 +23,7 @@ function updateRefreshMessage() {
 	chrome.storage.local.get({
 		nextPollIn: 0,
 	}, (items) => {
-		const minutes = items.nextPollIn.toString();
+		const minutes = (+items.nextPollIn + 1).toString();
 		document.getElementById('nextRefreshMessage').innerHTML = chrome.i18n.getMessage('nextRefresh', minutes);
 	});
 }
