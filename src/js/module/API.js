@@ -108,9 +108,11 @@ export default {
 					};
 					data.values.forEach((value) => {
 						let lastReviewedCommit = '';
+						let sawMe = value.author.user.name === credentials.user; // somehow if you remove yourself fromthe reviewers, the pr still shows up. so I filter them
 						value.reviewers.some((reviewer) => {
-							if (reviewer.user.name === credentials.user && reviewer.lastReviewedCommit) {
-								lastReviewedCommit = reviewer.lastReviewedCommit;
+							if (reviewer.user.name === credentials.user) {
+								sawMe = true;
+								lastReviewedCommit = reviewer.lastReviewedCommit || '';
 								return true;
 							}
 							return false;
@@ -151,10 +153,12 @@ export default {
 							commentCount: +(value.properties.commentCount || 0),
 							openTaskCount: +(value.properties.openTaskCount || 0),
 						};
-						if (prData.isMine && prData.state === 'OPEN') {
+						if (prData.isMine && newState === 'OPEN') {
 							newState = 'PENDING';
 						}
 						prData.state = newState;
+
+						if (!sawMe) { return; }
 						if (prData.state === 'OPEN') {
 							parsedData.activeIdList.push(value.id);
 						} else {

@@ -2,5 +2,5 @@
 //		constants closure
 
 export default {
-	POLL_EVERY: 9, // in minutes
+	POLL_EVERY: 10, // in minutes
 };

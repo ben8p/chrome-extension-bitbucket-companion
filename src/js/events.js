@@ -23,6 +23,9 @@ function openSettingsAfterIntall() {
 function fetchData() {
 	// summary:
 	//		fetch data and show a chrome notification
+	chrome.storage.local.set({
+		nextPollIn: CONSTANTS.POLL_EVERY,
+	}, () => true);
 
 	const notifyUser = (parsedData) => {
 		if (previousActiveIdList.join() !== parsedData.activeIdList.join()) {
@@ -91,7 +94,6 @@ function onAlarmFired() {
 			chrome.storage.local.set({
 				nextPollIn: CONSTANTS.POLL_EVERY,
 			}, () => true);
-			fetchData();
 		} else {
 			chrome.storage.local.set({
 				nextPollIn: --items.nextPollIn,
@@ -101,10 +103,9 @@ function onAlarmFired() {
 }
 
 function onStorageChange(changes) {
-	const keys = Object.keys(changes);
-	const settingHasChanged = keys.indexOf('bitbucketRestUrl') !== -1 || keys.indexOf('user') !== -1 || keys.indexOf('password') !== -1;
+	const needsRefresh = changes.bitbucketRestUrl || changes.user || changes.password || (changes.nextPollIn && changes.nextPollIn.newValue === 0);
 
-	if (settingHasChanged) {
+	if (needsRefresh) {
 		fetchData();
 	}
 }

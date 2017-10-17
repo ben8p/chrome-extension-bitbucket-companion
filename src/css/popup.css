@@ -2,7 +2,8 @@
 	display: none;
 }
 body {
-	width: 500px
+	width: 500px;
+	height: 550px;
 }
 h1, h2 {
 	padding: 5px;

@@ -23,7 +23,7 @@ function updateRefreshMessage() {
 	chrome.storage.local.get({
 		nextPollIn: 0,
 	}, (items) => {
-		const minutes = (+items.nextPollIn + 1).toString();
+		const minutes = items.nextPollIn.toString();
 		document.getElementById('nextRefreshMessage').innerHTML = chrome.i18n.getMessage('nextRefresh', minutes);
 	});
 }
@@ -66,8 +66,7 @@ function listPullRequests() {
 
 
 function onStorageChange(changes) {
-	const keys = Object.keys(changes);
-	if (keys.indexOf('nextPollIn') !== -1) {
+	if (changes.nextPollIn) {
 		const storageChange = changes.nextPollIn;
 		if (storageChange.newValue === 0) {
 			loading.update(true);
@@ -76,10 +75,10 @@ function onStorageChange(changes) {
 		}
 		updateRefreshMessage();
 	}
-	if (keys.indexOf('loading') !== -1) {
+	if (changes.loading) {
 		showLoading();
 	}
-	if (keys.indexOf('pullRequests') !== -1) {
+	if (changes.pullRequests) {
 		listPullRequests();
 	}
 }
@@ -98,7 +97,6 @@ function init() {
 	API.getCredentials().then((newCredentials) => {
 		credentials = newCredentials;
 		chrome.storage.onChanged.addListener(onStorageChange);
-
 		on(document.getElementById('refreshButton'), 'click', () => {
 			chrome.storage.local.set({
 				nextPollIn: 0,
