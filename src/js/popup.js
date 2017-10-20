@@ -31,8 +31,17 @@ function updateRefreshMessage() {
 function getTemplate(pullRequest, commentsPerUrlList) {
 	const commentDiff = (pullRequest.commentCount || 0) - (commentsPerUrlList[pullRequest.url] || 0);
 	const hasCommentDiffClass = commentDiff ? 'hasCommentDiff' : '';
+	const showThumbUp = pullRequest.canMerge === true ? '' : 'hidden';
+	const showThumbDown = pullRequest.canMerge === false ? '' : 'hidden';
+	const thumbDownDetails = pullRequest.conflicted ? chrome.i18n.getMessage('conflicted') : chrome.i18n.getMessage('approvalmissing');
 	return `<div class="pullrequest ${pullRequest.state}">
-		<h2><a name="${pullRequest.state}" /><span class="state">${pullRequest.state}</span><a href="${pullRequest.url}">${pullRequest.title}</a></h2>
+		<h2>
+			<a name="${pullRequest.state}" />
+			<span class="state">${pullRequest.state}</span>
+			<span class="thumb ${showThumbUp}">&#x1f44d;</span>
+			<span class="thumb ${showThumbDown}" title="${thumbDownDetails}">&#x1f44e;</span>
+			<a href="${pullRequest.url}">${pullRequest.title}</a>
+		</h2>
 		<div class="content">
 		<p><span class="repository">${pullRequest.mergeInto.repository} &gt; ${pullRequest.mergeInto.branch}</span><span class="author"><img src="${credentials.restUrl}/users/${pullRequest.authorId}/avatar.png?s=32" />${pullRequest.isMine ? chrome.i18n.getMessage('me') : pullRequest.author}</span></p>
 		<p><span class="comments ${hasCommentDiffClass}">${pullRequest.commentCount} ${chrome.i18n.getMessage('comments')}</span><span class="tasks">${pullRequest.openTaskCount} ${chrome.i18n.getMessage('openTasks')}</span></p>

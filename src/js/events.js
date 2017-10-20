@@ -46,42 +46,60 @@ function fetchData() {
 		loading.update(true);
 
 		API.getPullRequests().then((parsedData) => {
-			if ((parsedData.APPROVED || []).length > 0) {
-				// check if any APPROVED needs to be unapproved
-				const allGetPullRequestCommitsPromises = [];
-				const lastReviewedCommits = [];
-				parsedData.APPROVED.forEach((pullRequest) => {
-					lastReviewedCommits.push(pullRequest.myLastReviewedCommit);
-					allGetPullRequestCommitsPromises.push(API.getPullRequestCommits(pullRequest.from.projectKey, pullRequest.from.repositorySlug, pullRequest.id));
+			const allCanBeMergedPromises = [];
+			if ((parsedData.PENDING || []).length > 0) {
+				// check if pending pr can be merged
+				parsedData.PENDING.forEach((pullRequest) => {
+					allCanBeMergedPromises.push(API.canBeMerged(pullRequest.from.projectKey, pullRequest.from.repositorySlug, pullRequest.id));
+				});
+			}
+			Promise.all(allCanBeMergedPromises).then((results) => {
+				parsedData.PENDING.forEach((pullRequest) => {
+					(results || []).forEach((result) => {
+						if (pullRequest.from.projectKey === result.projectKey && pullRequest.from.repositorySlug === result.repositorySlug && pullRequest.id === result.pullRequestId) {
+							pullRequest.canMerge = result.canMerge;
+							pullRequest.conflicted = result.conflicted;
+						}
+					});
 				});
 
-				Promise.all(allGetPullRequestCommitsPromises).then((values) => {
-					const changedPullRequests = [];
-					values.forEach((value, index) => {
-						const lastReviewedCommit = lastReviewedCommits[index];
-						if (lastReviewedCommit === value.commitIds[0]) {
+				if ((parsedData.APPROVED || []).length > 0) {
+					// check if any APPROVED needs to be unapproved
+					const allGetPullRequestCommitsPromises = [];
+					const lastReviewedCommits = [];
+					parsedData.APPROVED.forEach((pullRequest) => {
+						lastReviewedCommits.push(pullRequest.myLastReviewedCommit);
+						allGetPullRequestCommitsPromises.push(API.getPullRequestCommits(pullRequest.from.projectKey, pullRequest.from.repositorySlug, pullRequest.id));
+					});
+
+					Promise.all(allGetPullRequestCommitsPromises).then((values) => {
+						const changedPullRequests = [];
+						values.forEach((value, index) => {
+							const lastReviewedCommit = lastReviewedCommits[index];
+							if (lastReviewedCommit === value.commitIds[0]) {
+								return;
+							}
+							changedPullRequests.push(value);
+						});
+						if (changedPullRequests.length === 0) {
+							// no changes in any PR we can update the badge and inform on the PR count
+							notifyUser(parsedData);
 							return;
 						}
-						changedPullRequests.push(value);
-					});
-					if (changedPullRequests.length === 0) {
-						// no changes in any PR we can update the badge and inform on the PR count
-						notifyUser(parsedData);
-						return;
-					}
-					notify(chrome.i18n.getMessage('haveChanged'), chrome.i18n.getMessage('prHaveChanged', changedPullRequests.length.toString()));
+						notify(chrome.i18n.getMessage('haveChanged'), chrome.i18n.getMessage('prHaveChanged', changedPullRequests.length.toString()));
 
-					const allRemoveApprovalPromises = [];
-					changedPullRequests.forEach((pullRequest) => {
-						allRemoveApprovalPromises.push(API.removeApproval(pullRequest.projectKey, pullRequest.repositorySlug, pullRequest.pullRequestId));
+						const allRemoveApprovalPromises = [];
+						changedPullRequests.forEach((pullRequest) => {
+							allRemoveApprovalPromises.push(API.removeApproval(pullRequest.projectKey, pullRequest.repositorySlug, pullRequest.pullRequestId));
+						});
+						Promise.all(allRemoveApprovalPromises).then(() => {
+							fetchData();
+						});
 					});
-					Promise.all(allRemoveApprovalPromises).then(() => {
-						fetchData();
-					});
-				});
-			} else {
-				notifyUser(parsedData);
-			}
+				} else {
+					notifyUser(parsedData);
+				}
+			});
 		});
 	});
 }

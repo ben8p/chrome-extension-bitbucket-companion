@@ -29,6 +29,10 @@ h1, h2 {
 	color: #d04437;
 	padding: 0 5px;
 }
+.thumb {
+	line-height: 15px;
+	font-size: 31px;
+}
 
 button {
 	background-color: #205081;

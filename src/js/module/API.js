@@ -52,6 +52,20 @@ function xhr(url, method, body) {
 }
 
 export default {
+	canBeMerged(projectKey, repositorySlug, pullRequestId) {
+		const url = `rest/api/1.0/projects/${projectKey}/repos/${repositorySlug}/pull-requests/${pullRequestId}/merge`;
+		return new Promise(((resolve, reject) => {
+			xhr(url).then((data) => {
+				resolve({
+					canMerge: data.canMerge === true,
+					conflicted: data.conflicted === true,
+					projectKey,
+					repositorySlug,
+					pullRequestId,
+				});
+			}, reject);
+		}));
+	},
 	removeApproval(projectKey, repositorySlug, pullRequestId) {
 		const url = `rest/api/1.0/projects/${projectKey}/repos/${repositorySlug}/pull-requests/${pullRequestId}/approve`;
 		return new Promise(((resolve, reject) => {
