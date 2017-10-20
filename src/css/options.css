@@ -1,0 +1,19 @@
+label {
+	float: left;
+	width: 150px;
+	margin: 5px;
+}
+input {
+	width: 150px;
+	border: 1px solid #205081;
+	margin: 5px;
+}
+
+
+button {
+	background-color: #205081;
+	border: 0;
+	color: #fff;
+	margin: 2px;
+	padding: 10px;
+}

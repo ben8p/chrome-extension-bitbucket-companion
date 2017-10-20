@@ -10,6 +10,16 @@ h1, h2 {
 	margin: 0;
 }
 
+.fixed {
+	height: 40px;
+	background-color: #fff;
+	width: 100%;
+}
+#reviewsList {
+	padding-top: 40px;
+
+}
+
 #progressMessage {
 	float:right;
 }
@@ -18,6 +28,14 @@ h1, h2 {
 	content: '\25B2';
 	color: #d04437;
 	padding: 0 5px;
+}
+
+button {
+	background-color: #205081;
+	border: 0;
+	color: #fff;
+	margin: 2px;
+	padding: 10px;
 }
 
 h2 {
@@ -71,6 +89,15 @@ h2 a {
 .pullrequest.DECLINED {
 	background-color: #d04437;
 }*/
+#shortcuts {
+	line-height: 35px;
+	text-align: center;
+	background-color: #205081;
+}
+#shortcuts a {
+	text-decoration: none;
+}
+.pullrequestState,
 .pullrequest .state {
 	float: left;
 	border: 1px solid #fff;
@@ -80,21 +107,30 @@ h2 a {
 	border-radius: 5px;
 	font-size: 12px;
 }
+.pullrequestState {
+	float: none;
+}
+.pullrequestState.OPEN,
 .pullrequest.OPEN .state {
 	background-color: #205081;
 }
+.pullrequestState.PENDING,
 .pullrequest.PENDING .state {
 	background-color: #815b3a;
 }
+.pullrequestState.APPROVED,
 .pullrequest.APPROVED .state {
 	background-color: #3572b0;
 }
+.pullrequestState.NEEDS_WORK,
 .pullrequest.NEEDS_WORK .state {
 	background-color: #f6c342;
 }
+.pullrequestState.MERGED,
 .pullrequest.MERGED .state {
 	background-color: #14892c;
 }
+.pullrequestState.DECLINED,
 .pullrequest.DECLINED .state {
 	background-color: #d04437;
 }

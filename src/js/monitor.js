@@ -12,22 +12,28 @@ API.getCredentials().then((credentials) => {
 		!document.location.href.endsWith(ACCEPTED_PAGE_END[2]))) {
 		return;
 	}
-	// records how many comments are on the PR at every visits of the PR
-	API.getPullRequests().then((pullRequests) => {
-		[].concat(pullRequests.OPEN || [], pullRequests.NEEDS_WORK || [], pullRequests.APPROVED || [], pullRequests.PENDING || [], pullRequests.MERGED || [], pullRequests.DECLINED || []).some((pullRequest) => {
-			if (!document.location.href.startsWith(pullRequest.url)) {
-				return false;
-			}
-			const data = {};
-			data[pullRequest.url] = pullRequest.commentCount;
-			chrome.storage.local.set(data, () => true);
-			return true;
+
+	const updateCommentCount = () =>
+		// records how many comments are on the PR at every visits of the PR
+		API.getPullRequests().then((pullRequests) => {
+			[].concat(pullRequests.OPEN || [], pullRequests.NEEDS_WORK || [], pullRequests.APPROVED || [], pullRequests.PENDING || [], pullRequests.MERGED || [], pullRequests.DECLINED || []).some((pullRequest) => {
+				if (!document.location.href.startsWith(pullRequest.url)) {
+					return false;
+				}
+				const data = {};
+				data[pullRequest.url] = pullRequest.commentCount;
+				chrome.storage.local.set(data, () => true);
+				return true;
+			});
 		});
-	});
+
+	updateCommentCount();
 
 	on(window, 'unload', () => {
-		chrome.storage.local.set({
-			nextPollIn: 0,
-		}, () => true);
+		updateCommentCount().then(() => {
+			chrome.storage.local.set({
+				nextPollIn: 0,
+			}, () => true);
+		});
 	});
 });

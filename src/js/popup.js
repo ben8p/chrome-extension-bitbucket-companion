@@ -32,7 +32,7 @@ function getTemplate(pullRequest, commentsPerUrlList) {
 	const commentDiff = (pullRequest.commentCount || 0) - (commentsPerUrlList[pullRequest.url] || 0);
 	const hasCommentDiffClass = commentDiff ? 'hasCommentDiff' : '';
 	return `<div class="pullrequest ${pullRequest.state}">
-		<h2><span class="state">${pullRequest.state}</span><a href="${pullRequest.url}">${pullRequest.title}</a></h2>
+		<h2><a name="${pullRequest.state}" /><span class="state">${pullRequest.state}</span><a href="${pullRequest.url}">${pullRequest.title}</a></h2>
 		<div class="content">
 		<p><span class="repository">${pullRequest.mergeInto.repository} &gt; ${pullRequest.mergeInto.branch}</span><span class="author"><img src="${credentials.restUrl}/users/${pullRequest.authorId}/avatar.png?s=32" />${pullRequest.isMine ? chrome.i18n.getMessage('me') : pullRequest.author}</span></p>
 		<p><span class="comments ${hasCommentDiffClass}">${pullRequest.commentCount} ${chrome.i18n.getMessage('comments')}</span><span class="tasks">${pullRequest.openTaskCount} ${chrome.i18n.getMessage('openTasks')}</span></p>
@@ -40,6 +40,10 @@ function getTemplate(pullRequest, commentsPerUrlList) {
 		<p>${markdown.toHTML(pullRequest.description)}</p>
 		</div>
 	</div>`;
+}
+
+function getShortcutTemplate(pullRequest, count) {
+	return `<a href=#${pullRequest.state}><span class="pullrequestState ${pullRequest.state}">${pullRequest.state} - ${count}</span></a>`;
 }
 
 function listPullRequests() {
@@ -54,10 +58,17 @@ function listPullRequests() {
 
 		chrome.storage.local.get(urlList, (values) => {
 			const tbody = [];
+			const shortcuts = [];
+			let previousState = '';
 			[].concat(items.pullRequests.OPEN || [], items.pullRequests.NEEDS_WORK || [], items.pullRequests.APPROVED || [], items.pullRequests.PENDING || [], items.pullRequests.MERGED || [], items.pullRequests.DECLINED || []).forEach((pullRequest) => {
 				tbody.push(getTemplate(pullRequest, values));
+				if (previousState !== pullRequest.state) {
+					previousState = pullRequest.state;
+					shortcuts.push(getShortcutTemplate(pullRequest, items.pullRequests[pullRequest.state].length));
+				}
 			});
 			document.getElementById('reviewsList').innerHTML = tbody.length ? tbody.join('') : NONE_ROW;
+			document.getElementById('shortcuts').innerHTML = shortcuts.length ? shortcuts.join('') : '';
 
 			loading.update(false);
 		});
