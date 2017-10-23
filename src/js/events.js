@@ -95,12 +95,20 @@ function fetchData() {
 						Promise.all(allRemoveApprovalPromises).then(() => {
 							fetchData();
 						});
+					}).catch(() => {
+						loading.update(false);
 					});
 				} else {
 					notifyUser(parsedData);
 				}
+			}).catch(() => {
+				loading.update(false);
 			});
+		}).catch(() => {
+			loading.update(false);
 		});
+	}).catch(() => {
+		loading.update(false);
 	});
 }
 

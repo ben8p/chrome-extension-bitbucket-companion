@@ -6,22 +6,18 @@ export default {
 		// summary:
 		//		set the loading state (according to the queue)
 
-		chrome.storage.local.get({
-			loading: 0,
-		}, (items) => {
-			chrome.storage.local.set({
-				loading: Math.max(0, items.loading + (state ? 1 : -1)),
-			}, () => true);
-		});
+		chrome.storage.local.set({
+			loading: state,
+		}, () => true);
 	},
 	isLoading() {
 		// summary:
 		//		return a promise which resolve to true or false
 		return new Promise(((resolve) => {
 			chrome.storage.local.get({
-				loading: 0,
+				loading: false,
 			}, (items) => {
-				resolve(items.loading > 0);
+				resolve(items.loading);
 			});
 		}));
 	},

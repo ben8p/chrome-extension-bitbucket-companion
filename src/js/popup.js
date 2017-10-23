@@ -5,7 +5,6 @@ import API from './module/API';
 import dom from './module/dom';
 import openSettings from './module/settings';
 import loading from './module/loading';
-import CONSTANTS from './module/CONSTANTS';
 import on from './module/on';
 import { markdown } from '../../node_modules/markdown';
 import '../css/popup.css';
@@ -78,8 +77,6 @@ function listPullRequests() {
 			});
 			document.getElementById('reviewsList').innerHTML = tbody.length ? tbody.join('') : NONE_ROW;
 			document.getElementById('shortcuts').innerHTML = shortcuts.length ? shortcuts.join('') : '';
-
-			loading.update(false);
 		});
 	});
 }
@@ -87,13 +84,8 @@ function listPullRequests() {
 
 function onStorageChange(changes) {
 	if (changes.nextPollIn) {
-		const storageChange = changes.nextPollIn;
-		if (storageChange.newValue === 0) {
-			loading.update(true);
-		} else if (storageChange.newValue === CONSTANTS.POLL_EVERY) {
-			loading.update(false);
-		}
 		updateRefreshMessage();
+		showLoading();
 	}
 	if (changes.loading) {
 		showLoading();
