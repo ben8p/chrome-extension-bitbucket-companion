@@ -54,7 +54,7 @@ function fetchData() {
 				});
 			}
 			Promise.all(allCanBeMergedPromises).then((results) => {
-				parsedData.PENDING.forEach((pullRequest) => {
+				(parsedData.PENDING || []).forEach((pullRequest) => {
 					(results || []).forEach((result) => {
 						if (pullRequest.from.projectKey === result.projectKey && pullRequest.from.repositorySlug === result.repositorySlug && pullRequest.id === result.pullRequestId) {
 							pullRequest.canMerge = result.canMerge;
