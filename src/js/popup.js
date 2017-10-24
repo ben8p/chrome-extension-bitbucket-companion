@@ -38,7 +38,7 @@ function getTemplate(pullRequest, commentsPerUrlList) {
 			<a name="${pullRequest.state}" />
 			<span class="state">${pullRequest.state}</span>
 			<span class="thumb ${showThumbUp}">&#x1f44d;</span>
-			<span class="thumb ${showThumbDown}" title="${thumbDownDetails}">&#x1f44e;</span>
+			<span class="thumb ${showThumbDown}" title="${thumbDownDetails}" alt="${thumbDownDetails}">&#x1f44e;</span>
 			<a href="${pullRequest.url}">${pullRequest.title}</a>
 		</h2>
 		<div class="content">
