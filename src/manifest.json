@@ -13,6 +13,7 @@
 		"storage",
 		"alarms",
 		"tabs",
+		"runtime",
 		"notifications",
 		"https://*/",
 		"http://*/"

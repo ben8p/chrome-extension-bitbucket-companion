@@ -136,6 +136,53 @@ function onStorageChange(changes) {
 	}
 }
 
+function isBitbucketServer(url, sendResponse) {
+	const ACCEPTED_PAGE_END = ['overview', 'diff', 'commits'];
+	const PULL_REQUEST_PATH = '/pull-requests/';
+	url = url.split('#')[0];
+	API.getCredentials().then((credentials) => {
+		if (!url.startsWith(credentials.restUrl) ||
+			!url.indexOf(PULL_REQUEST_PATH) === -1 ||
+			(!url.endsWith(ACCEPTED_PAGE_END[0]) &&
+			!url.endsWith(ACCEPTED_PAGE_END[1]) &&
+			!url.endsWith(ACCEPTED_PAGE_END[2]))) {
+			sendResponse(false);
+			return;
+		}
+		sendResponse(true);
+	});
+}
+
+function refresh(url) {
+	// records how many comments are on the PR at every visits of the PR
+	API.getPullRequests().then((pullRequests) => {
+		[].concat(pullRequests.OPEN || [], pullRequests.NEEDS_WORK || [], pullRequests.APPROVED || [], pullRequests.PENDING || [], pullRequests.MERGED || [], pullRequests.DECLINED || []).some((pullRequest) => {
+			if (!url.startsWith(pullRequest.url)) {
+				return false;
+			}
+			const data = {};
+			data[pullRequest.url] = pullRequest.commentCount;
+			chrome.storage.local.set(data, () => true);
+			return true;
+		});
+	}).then(() => {
+		chrome.storage.local.set({
+			nextPollIn: 0,
+		}, () => true);
+	});
+}
+
+function onMessage(request, sender, sendResponse) {
+	if (request.isBitbucketServer) {
+		isBitbucketServer(request.isBitbucketServer, sendResponse);
+		return true;
+	}
+	if (request.refresh) {
+		refresh(request.refresh);
+	}
+	return false;
+}
+
 function init() {
 	// summary:
 	//		Init the long running script
@@ -144,6 +191,8 @@ function init() {
 	chrome.storage.local.set({
 		nextPollIn: 0,
 	}, () => true);
+
+	chrome.runtime.onMessage.addListener(onMessage);
 
 	chrome.alarms.onAlarm.addListener(onAlarmFired);
 
