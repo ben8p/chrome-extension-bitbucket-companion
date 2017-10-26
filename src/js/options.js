@@ -10,7 +10,7 @@ function saveOptions() {
 	let bitbucketRestUrl = document.getElementById('bitbucketRestUrlInput').value;
 	const user = document.getElementById('bitbucketUserInput').value;
 	const password = document.getElementById('bitbucketPasswordInput').value;
-
+	const notifyMe = !document.getElementById('bitbucketNotification').checked;
 	// add leading slash
 	bitbucketRestUrl += bitbucketRestUrl.substr(-1) !== '/' ? '/' : '';
 
@@ -18,6 +18,7 @@ function saveOptions() {
 		bitbucketRestUrl,
 		user,
 		password,
+		notifyMe,
 	}, () => {
 		// Update status to let user know options were saved.
 		const status = document.getElementById('saveStatusMessage');
@@ -37,10 +38,12 @@ function init() {
 		bitbucketRestUrl: '',
 		user: '',
 		password: '',
+		notifyMe: true,
 	}, (items) => {
 		document.getElementById('bitbucketRestUrlInput').value = items.bitbucketRestUrl;
 		document.getElementById('bitbucketUserInput').value = items.user;
 		document.getElementById('bitbucketPasswordInput').value = items.password;
+		document.getElementById('bitbucketNotification').checked = !items.notifyMe;
 	});
 }
 

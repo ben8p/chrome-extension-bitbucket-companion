@@ -4,9 +4,10 @@ const config = require('./webpack.config');
 const fileSystem = require('fs-extra');
 const path = require('path');
 
-const manifest = require('../src/manifest.json');
 
 function build() {
+	const manifest = require('../src/manifest.json'); // eslint-disable-line global-require
+
 	// clean de dist folder
 	fileSystem.emptyDirSync(path.join(__dirname, '..', 'build'));
 

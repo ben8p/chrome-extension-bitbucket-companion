@@ -11,11 +11,15 @@ chrome.notifications.onClicked.addListener(() => {
 export default function (title, message) {
 	// summary:
 	//		open a basic notification
-
-	chrome.notifications.create(`notification${(new Date()).getTime()}`, {
-		type: 'basic',
-		iconUrl: '/img/icon.png',
-		title,
-		message,
-	}, () => true);
+	API.getCredentials().then((credentials) => {
+		if (credentials.notifyMe === false) {
+			return;
+		}
+		chrome.notifications.create(`notification${(new Date()).getTime()}`, {
+			type: 'basic',
+			iconUrl: '/img/icon.png',
+			title,
+			message,
+		}, () => true);
+	});
 }

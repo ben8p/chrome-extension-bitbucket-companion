@@ -11,6 +11,7 @@ function getCredentials() {
 			bitbucketRestUrl: '',
 			user: '',
 			password: '',
+			notifyMe: true,
 		}, (items) => {
 			if (!items.bitbucketRestUrl || !items.user || !items.password) {
 				reject();
@@ -19,6 +20,7 @@ function getCredentials() {
 					user: items.user,
 					password: items.password,
 					restUrl: items.bitbucketRestUrl,
+					notifyMe: items.notifyMe,
 				});
 			}
 		});

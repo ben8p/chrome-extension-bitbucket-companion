@@ -94,5 +94,8 @@
 	},
 	"serverplaceholder": {
 		"message": "https://my.bitbucket.server/"
+	},
+	"disableNotification": {
+		"message": "Do not notify me"
 	}
 }
