@@ -44,7 +44,7 @@
 		"message": "Pull Requests done"
 	},
 	"none": {
-		"message": "none"
+		"message": "Nothing to show"
 	},
 	"me": {
 		"message": "myself"
@@ -97,5 +97,23 @@
 	},
 	"disableNotification": {
 		"message": "Do not notify me"
+	},
+	"disableStateOpen": {
+		"message": "Do not show PR in OPEN state"
+	},
+	"disableStatePending": {
+		"message": "Do not show PR in PENDING state"
+	},
+	"disableStateMerged": {
+		"message": "Do not show PR in MERGED state"
+	},
+	"disableStateDeclined": {
+		"message": "Do not show PR in DECLINED state"
+	},
+	"disableStateNeedsWork": {
+		"message": "Do not show PR in NEEDS_WORK state"
+	},
+	"disableStateApproved": {
+		"message": "Do not show PR in APPROVED state"
 	}
 }

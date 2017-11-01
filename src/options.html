@@ -6,23 +6,47 @@
 		<title>__MSG_name__ __MSG_options__</title>
 	</head>
 	<body>
-		<div>
+		<div class="row">
 			<label for="bitbucketRestUrlInput">__MSG_api__</label>
 			<input type="text" id="bitbucketRestUrlInput" placeholder="__MSG_serverplaceholder__">
 		</div>
-		<div>
+		<div class="row">
 			<label for="bitbucketUserInput">__MSG_user__</label>
 			<input type="text" id="bitbucketUserInput" placeholder="__MSG_userplaceholder__">
 		</div>
-		<div>
+		<div class="row">
 			<label for="bitbucketPasswordInput">__MSG_password__</label>
 			<input type="password" id="bitbucketPasswordInput" placeholder="__MSG_passwordplaceholder__">
 		</div>
-		<div>
+		<div class="row">
 			<input type="checkbox" id="bitbucketNotification">
 			<label for="bitbucketNotification">__MSG_disableNotification__</label>
 		</div>
-		<div>
+		<div class="row">
+			<input type="checkbox" id="stateOpen">
+			<label for="stateOpen">__MSG_disableStateOpen__</label>
+		</div>
+		<div class="row">
+			<input type="checkbox" id="stateNeedsWork">
+			<label for="stateOpen">__MSG_disableStateNeedsWork__</label>
+		</div>
+		<div class="row">
+			<input type="checkbox" id="stateApproved">
+			<label for="stateOpen">__MSG_disableStateApproved__</label>
+		</div>
+		<div class="row">
+			<input type="checkbox" id="statePending">
+			<label for="statePending">__MSG_disableStatePending__</label>
+		</div>
+		<div class="row">
+			<input type="checkbox" id="stateMerged">
+			<label for="stateMerged">__MSG_disableStateMerged__</label>
+		</div>
+		<div class="row">
+			<input type="checkbox" id="stateDeclined">
+			<label for="stateDeclined">__MSG_disableStateDeclined__</label>
+		</div>
+		<div class="row">
 			<button id="saveButton">__MSG_save__</button>
 		</div>
 

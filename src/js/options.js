@@ -11,6 +11,12 @@ function saveOptions() {
 	const user = document.getElementById('bitbucketUserInput').value;
 	const password = document.getElementById('bitbucketPasswordInput').value;
 	const notifyMe = !document.getElementById('bitbucketNotification').checked;
+	const disableStateOpen = !!document.getElementById('stateOpen').checked;
+	const disableStateMerged = !!document.getElementById('stateMerged').checked;
+	const disableStatePending = !!document.getElementById('statePending').checked;
+	const disableStateDeclined = !!document.getElementById('stateDeclined').checked;
+	const disableStateApproved = !!document.getElementById('stateApproved').checked;
+	const disableStateNeedsWork = !!document.getElementById('stateNeedsWork').checked;
 	// add leading slash
 	bitbucketRestUrl += bitbucketRestUrl.substr(-1) !== '/' ? '/' : '';
 
@@ -19,6 +25,12 @@ function saveOptions() {
 		user,
 		password,
 		notifyMe,
+		disableStateOpen,
+		disableStateMerged,
+		disableStatePending,
+		disableStateDeclined,
+		disableStateApproved,
+		disableStateNeedsWork,
 	}, () => {
 		// Update status to let user know options were saved.
 		const status = document.getElementById('saveStatusMessage');
@@ -39,11 +51,24 @@ function init() {
 		user: '',
 		password: '',
 		notifyMe: true,
+		disableStateOpen: false,
+		disableStateMerged: false,
+		disableStatePending: false,
+		disableStateDeclined: false,
+		disableStateApproved: false,
+		disableStateNeedsWork: false,
 	}, (items) => {
 		document.getElementById('bitbucketRestUrlInput').value = items.bitbucketRestUrl;
 		document.getElementById('bitbucketUserInput').value = items.user;
 		document.getElementById('bitbucketPasswordInput').value = items.password;
 		document.getElementById('bitbucketNotification').checked = !items.notifyMe;
+
+		document.getElementById('stateOpen').checked = items.disableStateOpen;
+		document.getElementById('stateMerged').checked = items.disableStateMerged;
+		document.getElementById('statePending').checked = items.disableStatePending;
+		document.getElementById('stateDeclined').checked = items.disableStateDeclined;
+		document.getElementById('stateApproved').checked = items.disableStateApproved;
+		document.getElementById('stateNeedsWork').checked = items.disableStateNeedsWork;
 	});
 }
 

@@ -3,7 +3,7 @@
 // https://developer.atlassian.com/static/rest/bitbucket-server/5.4.1/bitbucket-rest.html#idm139808105701392
 // https://git.mybitbucketserver.com/rest/api/1.0/inbox/pull-requests
 
-function getCredentials() {
+function getSettings() {
 	// summary:
 	//		retrieve credentials stored in chrome storage
 	return new Promise(((resolve, reject) => {
@@ -12,6 +12,12 @@ function getCredentials() {
 			user: '',
 			password: '',
 			notifyMe: true,
+			disableStateOpen: false,
+			disableStateMerged: false,
+			disableStatePending: false,
+			disableStateDeclined: false,
+			disableStateApproved: false,
+			disableStateNeedsWork: false,
 		}, (items) => {
 			if (!items.bitbucketRestUrl || !items.user || !items.password) {
 				reject();
@@ -21,6 +27,12 @@ function getCredentials() {
 					password: items.password,
 					restUrl: items.bitbucketRestUrl,
 					notifyMe: items.notifyMe,
+					disableStateOpen: items.disableStateOpen,
+					disableStateMerged: items.disableStateMerged,
+					disableStatePending: items.disableStatePending,
+					disableStateDeclined: items.disableStateDeclined,
+					disableStateApproved: items.disableStateApproved,
+					disableStateNeedsWork: items.disableStateNeedsWork,
 				});
 			}
 		});
@@ -32,7 +44,7 @@ function xhr(url, method, body) {
 	//		perform a request to the api
 	method = method || 'GET';
 	return new Promise(((resolve, reject) => {
-		getCredentials().then((credentials) => {
+		getSettings().then((credentials) => {
 			const xhrObject = new XMLHttpRequest();
 
 			xhrObject.addEventListener('load', (response) => {
@@ -114,7 +126,7 @@ export default {
 		// summary:
 		//		get all reviews a user has to do
 		return new Promise(((resolve, reject) => {
-			getCredentials().then((credentials) => {
+			getSettings().then((credentials) => {
 				const url = 'rest/api/1.0/dashboard/pull-requests';
 				xhr(url).then((data) => {
 					const parsedData = {
@@ -189,5 +201,5 @@ export default {
 			}, reject);
 		}));
 	},
-	getCredentials,
+	getSettings,
 };

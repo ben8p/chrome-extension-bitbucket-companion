@@ -41,7 +41,7 @@ function fetchData() {
 		loading.update(false);
 	};
 
-	API.getCredentials().then((credentials) => {
+	API.getSettings().then((credentials) => {
 		if (!credentials.user || !credentials.password) { return; }
 		loading.update(true);
 
@@ -140,7 +140,7 @@ function isBitbucketServer(url, sendResponse) {
 	const ACCEPTED_PAGE_END = ['overview', 'diff', 'commits'];
 	const PULL_REQUEST_PATH = '/pull-requests/';
 	url = url.split('#')[0];
-	API.getCredentials().then((credentials) => {
+	API.getSettings().then((credentials) => {
 		if (!url.startsWith(credentials.restUrl) ||
 			!url.indexOf(PULL_REQUEST_PATH) === -1 ||
 			(!url.endsWith(ACCEPTED_PAGE_END[0]) &&

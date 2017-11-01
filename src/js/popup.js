@@ -9,8 +9,8 @@ import on from './module/on';
 import { markdown } from '../../node_modules/markdown';
 import '../css/popup.css';
 
-const NONE_ROW = '<p>__MSG_none__</p>';
-let credentials;
+const NONE_ROW = `<p>${chrome.i18n.getMessage('none')}</p>`;
+let settings;
 
 function showLoading() {
 	loading.isLoading().then((state) => {
@@ -42,7 +42,7 @@ function getTemplate(pullRequest, commentsPerUrlList) {
 			<a href="${pullRequest.url}">${pullRequest.title}</a>
 		</h2>
 		<div class="content">
-		<p><span class="repository">${pullRequest.mergeInto.repository} &gt; ${pullRequest.mergeInto.branch}</span><span class="author"><img src="${credentials.restUrl}/users/${pullRequest.authorId}/avatar.png?s=32" />${pullRequest.isMine ? chrome.i18n.getMessage('me') : pullRequest.author}</span></p>
+		<p><span class="repository">${pullRequest.mergeInto.repository} &gt; ${pullRequest.mergeInto.branch}</span><span class="author"><img src="${settings.restUrl}/users/${pullRequest.authorId}/avatar.png?s=32" />${pullRequest.isMine ? chrome.i18n.getMessage('me') : pullRequest.author}</span></p>
 		<p><span class="comments ${hasCommentDiffClass}">${pullRequest.commentCount} ${chrome.i18n.getMessage('comments')}</span><span class="tasks">${pullRequest.openTaskCount} ${chrome.i18n.getMessage('openTasks')}</span></p>
 		<p><span class="comments">${commentDiff} ${chrome.i18n.getMessage('sinceRecord')}</span></p>
 		<p>${markdown.toHTML(pullRequest.description)}</p>
@@ -67,8 +67,29 @@ function listPullRequests() {
 		chrome.storage.local.get(urlList, (values) => {
 			const tbody = [];
 			const shortcuts = [];
+			const list = [];
 			let previousState = '';
-			[].concat(items.pullRequests.OPEN || [], items.pullRequests.NEEDS_WORK || [], items.pullRequests.APPROVED || [], items.pullRequests.PENDING || [], items.pullRequests.MERGED || [], items.pullRequests.DECLINED || []).forEach((pullRequest) => {
+
+			if (items.pullRequests.OPEN && !settings.disableStateOpen) {
+				list.push(...items.pullRequests.OPEN);
+			}
+			if (items.pullRequests.NEEDS_WORK && !settings.disableStateNeedsWork) {
+				list.push(...items.pullRequests.NEEDS_WORK);
+			}
+			if (items.pullRequests.APPROVED && !settings.disableStateApproved) {
+				list.push(...items.pullRequests.APPROVED);
+			}
+			if (items.pullRequests.PENDING && !settings.disableStatePending) {
+				list.push(...items.pullRequests.PENDING);
+			}
+			if (items.pullRequests.MERGED && !settings.disableStateMerged) {
+				list.push(...items.pullRequests.MERGED);
+			}
+			if (items.pullRequests.DECLINED && !settings.disableStateDeclined) {
+				list.push(...items.pullRequests.DECLINED);
+			}
+
+			list.forEach((pullRequest) => {
 				tbody.push(getTemplate(pullRequest, values));
 				if (previousState !== pullRequest.state) {
 					previousState = pullRequest.state;
@@ -106,8 +127,8 @@ function connectClickEvent() {
 
 function init() {
 	i18n();
-	API.getCredentials().then((newCredentials) => {
-		credentials = newCredentials;
+	API.getSettings().then((newSettings) => {
+		settings = newSettings;
 		chrome.storage.onChanged.addListener(onStorageChange);
 		on(document.getElementById('refreshButton'), 'click', () => {
 			chrome.storage.local.set({

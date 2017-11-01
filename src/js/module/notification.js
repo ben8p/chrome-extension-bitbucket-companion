@@ -3,7 +3,7 @@
 import API from './API';
 
 chrome.notifications.onClicked.addListener(() => {
-	API.getCredentials().then((credentials) => {
+	API.getSettings().then((credentials) => {
 		chrome.tabs.create({ url: credentials.restUrl });
 	});
 });
@@ -11,7 +11,7 @@ chrome.notifications.onClicked.addListener(() => {
 export default function (title, message) {
 	// summary:
 	//		open a basic notification
-	API.getCredentials().then((credentials) => {
+	API.getSettings().then((credentials) => {
 		if (credentials.notifyMe === false) {
 			return;
 		}
