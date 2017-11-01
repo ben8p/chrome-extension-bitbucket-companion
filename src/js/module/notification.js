@@ -8,11 +8,24 @@ chrome.notifications.onClicked.addListener(() => {
 	});
 });
 
-export default function (title, message) {
+function setIcon(isError) {
+	chrome.browserAction.setIcon({
+		path: isError ? '/img/icon-error.png' : '/img/icon.png',
+	});
+}
+
+export default function (title, message, options = {}) {
 	// summary:
 	//		open a basic notification
 	API.getSettings().then((credentials) => {
-		if (credentials.notifyMe === false) {
+		if (options.tooltip !== false) {
+			chrome.browserAction.setTitle({
+				title: message,
+			});
+		}
+		setIcon(options.isError || false);
+
+		if (credentials.notifyMe === false && options.force !== true) {
 			return;
 		}
 		chrome.notifications.create(`notification${(new Date()).getTime()}`, {

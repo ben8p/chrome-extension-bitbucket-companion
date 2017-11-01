@@ -7,6 +7,7 @@ import notify from './module/notification';
 //		long running script closure
 
 let previousActiveIdList = [];
+let dirtyCredentials = null;
 
 function openSettingsAfterIntall() {
 	// summary:
@@ -19,6 +20,33 @@ function openSettingsAfterIntall() {
 	localStorage.setItem('installTime', now);
 	openSettingsView();
 }
+
+function processError(status) {
+	switch (status) {
+	default:
+		break;
+	case -1:
+		// could not reach the server
+		notify(chrome.i18n.getMessage('serverError'), chrome.i18n.getMessage('updateServerUrl'), {
+			isError: true,
+		});
+		break;
+	case 401:
+		// authorisation issue
+		notify(chrome.i18n.getMessage('unauthorized'), chrome.i18n.getMessage('updateCredentials'), {
+			isError: true,
+			force: true,
+		});
+		API.getSettings().then((credentials) => {
+			dirtyCredentials = {
+				user: credentials.user,
+				password: credentials.password,
+			};
+		});
+		break;
+	}
+}
+
 
 function fetchData() {
 	// summary:
@@ -43,6 +71,12 @@ function fetchData() {
 
 	API.getSettings().then((credentials) => {
 		if (!credentials.user || !credentials.password) { return; }
+		if (dirtyCredentials && dirtyCredentials.user === credentials.user && dirtyCredentials.password === credentials.password) {
+			// dirty state...
+			return;
+		}
+		dirtyCredentials = null;
+
 		loading.update(true);
 
 		API.getPullRequests().then((parsedData) => {
@@ -86,7 +120,9 @@ function fetchData() {
 							notifyUser(parsedData);
 							return;
 						}
-						notify(chrome.i18n.getMessage('haveChanged'), chrome.i18n.getMessage('prHaveChanged', changedPullRequests.length.toString()));
+						notify(chrome.i18n.getMessage('haveChanged'), chrome.i18n.getMessage('prHaveChanged', changedPullRequests.length.toString()), {
+							tooltip: false,
+						});
 
 						const allRemoveApprovalPromises = [];
 						changedPullRequests.forEach((pullRequest) => {
@@ -94,20 +130,26 @@ function fetchData() {
 						});
 						Promise.all(allRemoveApprovalPromises).then(() => {
 							fetchData();
+						}).catch((status) => {
+							processError(status);
 						});
-					}).catch(() => {
+					}).catch((status) => {
+						processError(status);
 						loading.update(false);
 					});
 				} else {
 					notifyUser(parsedData);
 				}
-			}).catch(() => {
+			}).catch((status) => {
+				processError(status);
 				loading.update(false);
 			});
-		}).catch(() => {
+		}).catch((status) => {
+			processError(status);
 			loading.update(false);
 		});
-	}).catch(() => {
+	}).catch((status) => {
+		processError(status);
 		loading.update(false);
 	});
 }
@@ -165,7 +207,7 @@ function refresh(url) {
 			chrome.storage.local.set(data, () => true);
 			return true;
 		});
-	}).then(() => {
+
 		chrome.storage.local.set({
 			nextPollIn: 0,
 		}, () => true);
@@ -188,6 +230,7 @@ function init() {
 	//		Init the long running script
 
 	openSettingsAfterIntall();
+	dirtyCredentials = null;
 	chrome.storage.local.set({
 		nextPollIn: 0,
 	}, () => true);

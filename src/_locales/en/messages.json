@@ -115,5 +115,17 @@
 	},
 	"disableStateApproved": {
 		"message": "Do not show PR in APPROVED state"
+	},
+	"unauthorized": {
+		"message": "Unauthorized"
+	},
+	"updateCredentials": {
+		"message": "Please open the settings and update your credentials."
+	},
+	"serverError": {
+		"message": "Error"
+	},
+	"updateServerUrl": {
+		"message": "Server not reachable: please check the settings"
 	}
 }

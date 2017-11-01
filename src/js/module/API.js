@@ -49,12 +49,14 @@ function xhr(url, method, body) {
 
 			xhrObject.addEventListener('load', (response) => {
 				if (response.target.status === 404 || response.target.status === 401) {
-					reject();
+					reject(response.target.status);
 				} else {
 					resolve(JSON.parse(response.target.response));
 				}
 			}, false);
-			xhrObject.addEventListener('error', reject, false);
+			xhrObject.addEventListener('error', () => {
+				reject(-1);
+			}, false);
 
 			xhrObject.open(method, credentials.restUrl + url);
 			const b64 = window.btoa(`${credentials.user}:${credentials.password}`);
