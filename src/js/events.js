@@ -64,19 +64,18 @@ function fetchData() {
 	}, () => true);
 
 	const notifyUser = (parsedData) => {
-		notify('', '', {
-			badge: '',
-			mute: true,
-		});
+		const count = parsedData.activeIdList.length.toString();
 		if (previousActiveIdList.join() !== parsedData.activeIdList.join()) {
 			previousActiveIdList = parsedData.activeIdList;
 			if (parsedData.activeIdList.length > 0) {
-				const count = parsedData.activeIdList.length.toString();
 				notify(chrome.i18n.getMessage('dontForget'), chrome.i18n.getMessage('reviewsToDo', count), {
 					badge: count,
 				});
 			}
 		}
+		notify(null, null, {
+			badge: count > 0 ? count : '',
+		});
 
 		chrome.storage.local.set({
 			pullRequests: parsedData,

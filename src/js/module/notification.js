@@ -19,7 +19,7 @@ export default function (title, message, options = {}) {
 	//		open a basic notification
 	API.getSettings().then((credentials) => {
 		// tooltip
-		if (options.tooltip !== false) {
+		if (message && options.tooltip !== false) {
 			chrome.browserAction.setTitle({
 				title: message,
 			});
@@ -37,7 +37,7 @@ export default function (title, message, options = {}) {
 		}
 
 		// desktop notification
-		if ((credentials.notifyMe === false && options.force !== true) || options.mute) {
+		if ((credentials.notifyMe === false && options.force !== true) || !message) {
 			return;
 		}
 		chrome.notifications.create(`notification${(new Date()).getTime()}`, {
