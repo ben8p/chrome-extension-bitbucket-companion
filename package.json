@@ -10,6 +10,7 @@
     "dev": "node utils/dev.js"
   },
   "devDependencies": {
+    "archiver": "^2.1.0",
     "css-loader": "^0.25.0",
     "eslint": "^4.8.0",
     "eslint-config-airbnb": "^16.0.0",
