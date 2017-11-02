@@ -8,6 +8,7 @@ import notify from './module/notification';
 
 let previousActiveIdList = [];
 let dirtyCredentials = null;
+let lastErrorStatus = null;
 
 function openSettingsAfterIntall() {
 	// summary:
@@ -22,8 +23,15 @@ function openSettingsAfterIntall() {
 }
 
 function processError(status) {
+	if (lastErrorStatus === status) {
+		return;
+	}
+	lastErrorStatus = status;
 	switch (status) {
 	default:
+		notify(chrome.i18n.getMessage('unknownXHRError'), chrome.i18n.getMessage('unknownXHRErrorDetails'), {
+			isError: true,
+		});
 		break;
 	case -1:
 		// could not reach the server
@@ -56,13 +64,20 @@ function fetchData() {
 	}, () => true);
 
 	const notifyUser = (parsedData) => {
+		notify('', '', {
+			badge: '',
+			mute: true,
+		});
 		if (previousActiveIdList.join() !== parsedData.activeIdList.join()) {
 			previousActiveIdList = parsedData.activeIdList;
 			if (parsedData.activeIdList.length > 0) {
-				notify(chrome.i18n.getMessage('dontForget'), chrome.i18n.getMessage('reviewsToDo', parsedData.activeIdList.length.toString()));
+				const count = parsedData.activeIdList.length.toString();
+				notify(chrome.i18n.getMessage('dontForget'), chrome.i18n.getMessage('reviewsToDo', count), {
+					badge: count,
+				});
 			}
 		}
-		chrome.browserAction.setBadgeText({ text: (parsedData.activeIdList.length > 0 ? parsedData.activeIdList.length : '').toString() });
+
 		chrome.storage.local.set({
 			pullRequests: parsedData,
 		}, () => true);

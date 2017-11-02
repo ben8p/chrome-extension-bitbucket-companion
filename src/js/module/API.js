@@ -46,15 +46,20 @@ function xhr(url, method, body) {
 	return new Promise(((resolve, reject) => {
 		getSettings().then((credentials) => {
 			const xhrObject = new XMLHttpRequest();
+			xhrObject.timeout = 5000; // time in milliseconds
 
 			xhrObject.addEventListener('load', (response) => {
-				if (response.target.status === 404 || response.target.status === 401) {
+				if (response.target.status < 200 || response.target.status >= 300) {
 					reject(response.target.status);
 				} else {
 					resolve(JSON.parse(response.target.response));
 				}
 			}, false);
 			xhrObject.addEventListener('error', () => {
+				reject(-1);
+			}, false);
+
+			xhrObject.addEventListener('timeout', () => {
 				reject(-1);
 			}, false);
 

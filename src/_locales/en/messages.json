@@ -127,5 +127,11 @@
 	},
 	"updateServerUrl": {
 		"message": "Server not reachable: please check the settings"
+	},
+	"unknownXHRError": {
+		"message": "Unknown error"
+	},
+	"unknownXHRErrorDetails": {
+		"message": "an unknown network error happend"
 	}
 }

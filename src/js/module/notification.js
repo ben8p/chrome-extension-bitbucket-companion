@@ -18,14 +18,26 @@ export default function (title, message, options = {}) {
 	// summary:
 	//		open a basic notification
 	API.getSettings().then((credentials) => {
+		// tooltip
 		if (options.tooltip !== false) {
 			chrome.browserAction.setTitle({
 				title: message,
 			});
 		}
+
+		// icon
 		setIcon(options.isError || false);
 
-		if (credentials.notifyMe === false && options.force !== true) {
+		// badge
+		if (options.isError) {
+			options.badge = '';
+		}
+		if (typeof options.badge === 'string') {
+			chrome.browserAction.setBadgeText({ text: options.badge });
+		}
+
+		// desktop notification
+		if ((credentials.notifyMe === false && options.force !== true) || options.mute) {
 			return;
 		}
 		chrome.notifications.create(`notification${(new Date()).getTime()}`, {
