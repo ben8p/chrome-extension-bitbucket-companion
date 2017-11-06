@@ -8,7 +8,7 @@ const fs = require('fs');
 const archiver = require('archiver');
 
 function build() {
-	let contents = fs.readFileSync(path.join(__dirname, '..', 'build', 'manifest.json'), 'utf8');
+	let contents = fs.readFileSync(path.join(__dirname, '..', 'src', 'manifest.json'), 'utf8');
 	const manifest = JSON.parse(contents);
 	contents = fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8');
 	const packageJson = JSON.parse(contents);
