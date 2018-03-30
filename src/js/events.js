@@ -74,7 +74,7 @@ function fetchData() {
 			}
 		}
 		notify(null, null, {
-			badge: count > 0 ? count : '',
+			badge: +count > 0 ? count : '',
 		});
 
 		chrome.storage.local.set({
@@ -193,15 +193,8 @@ function onStorageChange(changes) {
 }
 
 function isBitbucketServer(url, sendResponse) {
-	const ACCEPTED_PAGE_END = ['overview', 'diff', 'commits'];
-	const PULL_REQUEST_PATH = '/pull-requests/';
-	url = url.split('#')[0];
 	API.getSettings().then((credentials) => {
-		if (!url.startsWith(credentials.restUrl) ||
-			!url.indexOf(PULL_REQUEST_PATH) === -1 ||
-			(!url.endsWith(ACCEPTED_PAGE_END[0]) &&
-			!url.endsWith(ACCEPTED_PAGE_END[1]) &&
-			!url.endsWith(ACCEPTED_PAGE_END[2]))) {
+		if (!url.startsWith(credentials.restUrl)) {
 			sendResponse(false);
 			return;
 		}

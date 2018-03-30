@@ -25,6 +25,12 @@ export default function (title, message, options = {}) {
 			});
 		}
 
+		if (!options.isError && options.badge === '' && options.tooltip !== false) {
+			chrome.browserAction.setTitle({
+				title: '',
+			});
+		}
+
 		// icon
 		setIcon(options.isError || false);
 

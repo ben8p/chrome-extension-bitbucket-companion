@@ -6,5 +6,6 @@ A little companion for atlassian bitbucket server.
 - Tracks comments you may have to read.  
 - Automatically delete approval when an approved pull request changes.  
 - Notify you when you have pull requests pending  
+- Allow to sort in the branches view
   
 Note: This require Bitbucket REST API to be enabled.
