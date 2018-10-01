@@ -102,17 +102,28 @@ function listPullRequests() {
 	});
 }
 
+function toggleUI() {
+	chrome.storage.local.get({
+		inErrorState: false,
+	}, (items) => {
+		document.getElementById('contentWrapper').classList.toggle('hidden', items.inErrorState);
+		document.getElementById('errorMessage').classList.toggle('hidden', !items.inErrorState);
+	});
+}
 
 function onStorageChange(changes) {
-	if (changes.nextPollIn) {
+	if (changes.nextPollIn !== undefined) {
 		updateRefreshMessage();
 		showLoading();
 	}
-	if (changes.loading) {
+	if (changes.loading !== undefined) {
 		showLoading();
 	}
-	if (changes.pullRequests) {
+	if (changes.pullRequests !== undefined) {
 		listPullRequests();
+	}
+	if (changes.inErrorState !== undefined) {
+		toggleUI();
 	}
 }
 
@@ -135,7 +146,17 @@ function init() {
 				nextPollIn: 0,
 			}, () => true);
 		});
+		on(document.getElementById('forceRefreshButton'), 'click', () => {
+			chrome.storage.local.set({
+				inErrorState: false,
+				nextPollIn: 0,
+			}, () => true);
+		});
+		on(document.getElementById('forceSettings'), 'click', () => {
+			openSettings();
+		});
 
+		toggleUI();
 		showLoading();
 		updateRefreshMessage();
 		listPullRequests();

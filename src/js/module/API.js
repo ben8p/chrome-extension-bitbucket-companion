@@ -18,6 +18,7 @@ function getSettings() {
 			disableStateDeclined: false,
 			disableStateApproved: false,
 			disableStateNeedsWork: false,
+			autoRemoveApproval: true,
 		}, (items) => {
 			if (!items.bitbucketRestUrl || !items.user || !items.password) {
 				reject();
@@ -33,10 +34,17 @@ function getSettings() {
 					disableStateDeclined: items.disableStateDeclined,
 					disableStateApproved: items.disableStateApproved,
 					disableStateNeedsWork: items.disableStateNeedsWork,
+					autoRemoveApproval: items.autoRemoveApproval,
 				});
 			}
 		});
 	}));
+}
+
+function setInErrorState(callback) {
+	chrome.storage.local.set({
+		inErrorState: true,
+	}, callback);
 }
 
 function xhr(url, method, body) {
@@ -44,31 +52,46 @@ function xhr(url, method, body) {
 	//		perform a request to the api
 	method = method || 'GET';
 	return new Promise(((resolve, reject) => {
-		getSettings().then((credentials) => {
-			const xhrObject = new XMLHttpRequest();
-			xhrObject.timeout = 5000; // time in milliseconds
-
-			xhrObject.addEventListener('load', (response) => {
-				if (response.target.status < 200 || response.target.status >= 300) {
-					reject(response.target.status);
-				} else {
-					resolve(JSON.parse(response.target.response));
-				}
-			}, false);
-			xhrObject.addEventListener('error', () => {
+		chrome.storage.local.get({
+			inErrorState: false,
+		}, (items) => {
+			if (items.inErrorState) {
 				reject(-1);
-			}, false);
+				return;
+			}
 
-			xhrObject.addEventListener('timeout', () => {
-				reject(-1);
-			}, false);
+			getSettings().then((credentials) => {
+				const xhrObject = new XMLHttpRequest();
+				xhrObject.timeout = 5000; // time in milliseconds
 
-			xhrObject.open(method, credentials.restUrl + url);
-			const b64 = window.btoa(`${credentials.user}:${credentials.password}`);
-			xhrObject.setRequestHeader('Authorization', `Basic ${b64}`);
+				xhrObject.addEventListener('load', (response) => {
+					if (response.target.status < 200 || response.target.status >= 300) {
+						setInErrorState(() => {
+							reject(response.target.status);
+						});
+					} else {
+						resolve(JSON.parse(response.target.response));
+					}
+				}, false);
+				xhrObject.addEventListener('error', () => {
+					setInErrorState(() => {
+						reject(-1);
+					});
+				}, false);
 
-			xhrObject.send(body || null);
-		}, reject);
+				xhrObject.addEventListener('timeout', () => {
+					setInErrorState(() => {
+						reject(-1);
+					});
+				}, false);
+
+				xhrObject.open(method, credentials.restUrl + url);
+				const b64 = window.btoa(`${credentials.user}:${credentials.password}`);
+				xhrObject.setRequestHeader('Authorization', `Basic ${b64}`);
+
+				xhrObject.send(body || null);
+			}, reject);
+		});
 	}));
 }
 

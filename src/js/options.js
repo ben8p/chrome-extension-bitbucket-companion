@@ -17,6 +17,7 @@ function saveOptions() {
 	const disableStateDeclined = !!document.getElementById('stateDeclined').checked;
 	const disableStateApproved = !!document.getElementById('stateApproved').checked;
 	const disableStateNeedsWork = !!document.getElementById('stateNeedsWork').checked;
+	const autoRemoveApproval = !!document.getElementById('autoRemoveApproval').checked;
 	// add leading slash
 	bitbucketRestUrl += bitbucketRestUrl.substr(-1) !== '/' ? '/' : '';
 
@@ -31,7 +32,13 @@ function saveOptions() {
 		disableStateDeclined,
 		disableStateApproved,
 		disableStateNeedsWork,
+		autoRemoveApproval,
 	}, () => {
+		chrome.storage.local.set({
+			inErrorState: false,
+			nextPollIn: 0,
+		}, () => true);
+
 		// Update status to let user know options were saved.
 		const status = document.getElementById('saveStatusMessage');
 		status.textContent = chrome.i18n.getMessage('saved');
@@ -57,6 +64,7 @@ function init() {
 		disableStateDeclined: false,
 		disableStateApproved: false,
 		disableStateNeedsWork: false,
+		autoRemoveApproval: true,
 	}, (items) => {
 		document.getElementById('bitbucketRestUrlInput').value = items.bitbucketRestUrl;
 		document.getElementById('bitbucketUserInput').value = items.user;
@@ -69,6 +77,7 @@ function init() {
 		document.getElementById('stateDeclined').checked = items.disableStateDeclined;
 		document.getElementById('stateApproved').checked = items.disableStateApproved;
 		document.getElementById('stateNeedsWork').checked = items.disableStateNeedsWork;
+		document.getElementById('autoRemoveApproval').checked = items.autoRemoveApproval;
 	});
 }
 

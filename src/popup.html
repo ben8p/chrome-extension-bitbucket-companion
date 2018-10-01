@@ -8,13 +8,15 @@
  </head>
 	<body>
 		<div id="errorMessage" class="error hidden">
-			__MSG_settingsFirst__
+			<div>__MSG_settingsFirst__</div>
+			<button id="forceSettings">__MSG_openSettings__</button>
+			<button id="forceRefreshButton">__MSG_retry__</button>
 		</div>
 		<div id="contentWrapper">
 			<div class="fixed">
 				<div id="progressMessage" class="hidden">__MSG_refreshInProgress__</div>
-				<div>
-					<button id="refreshButton">update</button>
+				<div id="refreshActions">
+					<button id="refreshButton">__MSG_update__</button>
 					<span id="nextRefreshMessage"></span>
 				</div>
 				<div id="shortcuts">

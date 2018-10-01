@@ -35,7 +35,16 @@
 		"message": "All options are saved."
 	},
 	"settingsFirst": {
-		"message": "Something went wrong, maybe you didn't configure properly the extension, or maybe you are not admin. Please first visit the options page to double check the settings"
+		"message": "Something went wrong, maybe you didn't configure properly the extension. Please first visit the options page to double check the settings"
+	},
+	"openSettings": {
+		"message": "Open settings"
+	},
+	"retry": {
+		"message": "Retry"
+	},
+	"update": {
+		"message": "Update"
 	},
 	"todo": {
 		"message": "Pull Requests to do"
@@ -115,6 +124,9 @@
 	},
 	"disableStateApproved": {
 		"message": "Do not show PR in APPROVED state"
+	},
+	"autoRemoveApproval": {
+		"message": "Remove approval on any PR change"
 	},
 	"unauthorized": {
 		"message": "Unauthorized"

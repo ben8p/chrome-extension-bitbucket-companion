@@ -7,7 +7,6 @@ import notify from './module/notification';
 //		long running script closure
 
 let previousActiveIdList = [];
-let dirtyCredentials = null;
 let lastErrorStatus = null;
 
 function openSettingsAfterIntall() {
@@ -45,12 +44,6 @@ function processError(status) {
 			isError: true,
 			force: true,
 		});
-		API.getSettings().then((credentials) => {
-			dirtyCredentials = {
-				user: credentials.user,
-				password: credentials.password,
-			};
-		});
 		break;
 	}
 }
@@ -85,12 +78,6 @@ function fetchData() {
 
 	API.getSettings().then((credentials) => {
 		if (!credentials.user || !credentials.password) { return; }
-		if (dirtyCredentials && dirtyCredentials.user === credentials.user && dirtyCredentials.password === credentials.password) {
-			// dirty state...
-			return;
-		}
-		dirtyCredentials = null;
-
 		loading.update(true);
 
 		API.getPullRequests().then((parsedData) => {
@@ -134,19 +121,20 @@ function fetchData() {
 							notifyUser(parsedData);
 							return;
 						}
-						notify(chrome.i18n.getMessage('haveChanged'), chrome.i18n.getMessage('prHaveChanged', changedPullRequests.length.toString()), {
-							tooltip: false,
-						});
-
-						const allRemoveApprovalPromises = [];
-						changedPullRequests.forEach((pullRequest) => {
-							allRemoveApprovalPromises.push(API.removeApproval(pullRequest.projectKey, pullRequest.repositorySlug, pullRequest.pullRequestId));
-						});
-						Promise.all(allRemoveApprovalPromises).then(() => {
-							fetchData();
-						}).catch((status) => {
-							processError(status);
-						});
+						if (credentials.autoRemoveApproval) {
+							notify(chrome.i18n.getMessage('haveChanged'), chrome.i18n.getMessage('prHaveChanged', changedPullRequests.length.toString()), {
+								tooltip: false,
+							});
+							const allRemoveApprovalPromises = [];
+							changedPullRequests.forEach((pullRequest) => {
+								allRemoveApprovalPromises.push(API.removeApproval(pullRequest.projectKey, pullRequest.repositorySlug, pullRequest.pullRequestId));
+							});
+							Promise.all(allRemoveApprovalPromises).then(() => {
+								fetchData();
+							}).catch((status) => {
+								processError(status);
+							});
+						}
 					}).catch((status) => {
 						processError(status);
 						loading.update(false);
@@ -237,7 +225,6 @@ function init() {
 	//		Init the long running script
 
 	openSettingsAfterIntall();
-	dirtyCredentials = null;
 	chrome.storage.local.set({
 		nextPollIn: 0,
 	}, () => true);
