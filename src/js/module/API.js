@@ -65,7 +65,9 @@ function xhr(url, method, body) {
 				xhrObject.timeout = 5000; // time in milliseconds
 
 				xhrObject.addEventListener('load', (response) => {
-					if (response.target.status < 200 || response.target.status >= 300) {
+					if (response.target.status === 0) {
+						reject(0);
+					} else if (response.target.status < 200 || response.target.status >= 300) {
 						setInErrorState(() => {
 							reject(response.target.status);
 						});
@@ -73,16 +75,24 @@ function xhr(url, method, body) {
 						resolve(JSON.parse(response.target.response));
 					}
 				}, false);
-				xhrObject.addEventListener('error', () => {
-					setInErrorState(() => {
-						reject(-1);
-					});
+				xhrObject.addEventListener('error', (response) => {
+					if (response && response.target && response.target.status === 0) {
+						reject(0);
+					} else {
+						setInErrorState(() => {
+							reject(-1);
+						});
+					}
 				}, false);
 
-				xhrObject.addEventListener('timeout', () => {
-					setInErrorState(() => {
-						reject(-1);
-					});
+				xhrObject.addEventListener('timeout', (response) => {
+					if (response && response.target && response.target.status === 0) {
+						reject(0);
+					} else {
+						setInErrorState(() => {
+							reject(-1);
+						});
+					}
 				}, false);
 
 				xhrObject.open(method, credentials.restUrl + url);

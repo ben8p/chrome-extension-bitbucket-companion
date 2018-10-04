@@ -175,6 +175,12 @@ function onAlarmFired() {
 function onStorageChange(changes) {
 	const needsRefresh = changes.bitbucketRestUrl || changes.user || changes.password || (changes.nextPollIn && changes.nextPollIn.newValue === 0);
 
+	if (changes.inErrorState) {
+		notify('', '', {
+			isError: changes.inErrorState.newValue,
+		});
+	}
+
 	if (needsRefresh) {
 		fetchData();
 	}
