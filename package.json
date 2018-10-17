@@ -1,6 +1,6 @@
 {
   "name": "bitbucket-companion",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "a companion for bitbucket",
   "main": "src/popup.js",
   "author": "benjamin santalucia",

@@ -62,7 +62,7 @@ function xhr(url, method, body) {
 
 			getSettings().then((credentials) => {
 				const xhrObject = new XMLHttpRequest();
-				xhrObject.timeout = 5000; // time in milliseconds
+				xhrObject.timeout = 60000; // time in milliseconds
 
 				xhrObject.addEventListener('load', (response) => {
 					if (response.target.status === 0) {
